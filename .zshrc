@@ -30,8 +30,8 @@ setopt INC_APPEND_HISTORY  # Save commands as they are entered
 ZSH_THEME_GIT_PROMPT_CACHE=1
 
 # Start SSH agent and load keys
-eval "$(ssh-agent -s)" > /dev/null 2>&1
-ssh-add ~/.ssh/id_ed25519 > /dev/null 2>&1
+# eval "$(ssh-agent -s)" > /dev/null 2>&1
+# ssh-add ~/.ssh/id_ed25519 > /dev/null 2>&1
 
 # MacOS-specific aliases
 alias flushdns="sudo dscacheutil -flushcache; sudo killall -HUP mDNSResponder"
