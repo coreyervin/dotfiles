@@ -1,44 +1,78 @@
-# Set Zsh as the default shell
-export SHELL=$(which zsh)
+# Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
+# Initialization code that may require console input (password prompts, [y/n]
+# confirmations, etc.) must go above this block; everything else may go below.
+if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
+  source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
+fi
+
+# ------------------------------
+# Homebrew (Apple Silicon)
+# ------------------------------
+if [ -x /opt/homebrew/bin/brew ]; then
+  eval "$(/opt/homebrew/bin/brew shellenv)"
+fi
+
+# ------------------------------
+# Oh My Zsh
+# ------------------------------
 export ZSH="$HOME/.oh-my-zsh"
+ZSH_THEME="powerlevel10k/powerlevel10k"
 
-# Use the Agnoster theme
-ZSH_THEME="agnoster"
-
-# Hide username@hostname in Agnoster prompt (optional)
+# Hide username@hostname in prompt
 DEFAULT_USER=$USER
 
-# Enable plugins (ensure they are installed)
-plugins=(git zsh-autosuggestions zsh-syntax-highlighting macos)
+# Plugins
+plugins=(
+  git
+  macos
+  zsh-autosuggestions
+  zsh-syntax-highlighting
+)
 
 # Load Oh My Zsh
 source $ZSH/oh-my-zsh.sh
 
-# Enable colors
+# ------------------------------
+# Terminal & Color Settings
+# ------------------------------
+export TERM="xterm-256color"
 export CLICOLOR=1
 export LSCOLORS=GxFxCxDxBxegedabagaced
-export TERM="xterm-256color"
 
-# Improve Zsh history
+# ------------------------------
+# History Settings (Improved)
+# ------------------------------
 HISTSIZE=5000
 SAVEHIST=10000
 HISTFILE=~/.zsh_history
-setopt HIST_IGNORE_DUPS    # Ignore duplicate commands
-setopt INC_APPEND_HISTORY  # Save commands as they are entered
 
-# Optimize Git prompt speed
+setopt APPEND_HISTORY
+setopt INC_APPEND_HISTORY
+setopt HIST_IGNORE_DUPS
+setopt HIST_IGNORE_SPACE
+setopt SHARE_HISTORY
+
+# ------------------------------
+# Git Prompt Optimization
+# ------------------------------
 ZSH_THEME_GIT_PROMPT_CACHE=1
 
-# Start SSH agent and load keys
+# ------------------------------
+# SSH Agent (Optional)
+# ------------------------------
 # eval "$(ssh-agent -s)" > /dev/null 2>&1
 # ssh-add ~/.ssh/id_ed25519 > /dev/null 2>&1
 
-# MacOS-specific aliases
+# ------------------------------
+# macOS Aliases
+# ------------------------------
 alias flushdns="sudo dscacheutil -flushcache; sudo killall -HUP mDNSResponder"
 alias showhidden="defaults write com.apple.finder AppleShowAllFiles -bool true && killall Finder"
 alias hidehidden="defaults write com.apple.finder AppleShowAllFiles -bool false && killall Finder"
 
-# Aliases for convenience
+# ------------------------------
+# General Aliases
+# ------------------------------
 alias ll="ls -lah"
 alias gs="git status"
 alias ga="git add ."
@@ -46,7 +80,9 @@ alias gc="git commit -m"
 alias gp="git push"
 alias update="brew update && brew upgrade && brew cleanup"
 
+# ------------------------------
 # Docker Aliases
+# ------------------------------
 alias d="docker"
 alias dps="docker ps --format 'table {{.ID}}\t{{.Names}}\t{{.Status}}\t{{.Ports}}'"
 alias dpa="docker ps -a --format 'table {{.ID}}\t{{.Names}}\t{{.Status}}\t{{.Ports}}'"
@@ -59,17 +95,19 @@ alias dlogs="docker logs -f"
 alias dcompose="docker compose"
 alias dclean="docker system prune -af"
 
-# Docker Compose Aliases
+# Docker Compose
 alias dcu="docker compose up -d"
 alias dcd="docker compose down"
 alias dcr="docker compose restart"
 
-# Kubernetes (k8s) Aliases
+# ------------------------------
+# Kubernetes Aliases
+# ------------------------------
 alias k="kubectl"
 alias kctx="kubectl config use-context"
 alias kctxs="kubectl config get-contexts"
 alias kns="kubectl config set-context --current --namespace"
-alias kpods="kubectl get pods --output=wide"
+alias kpods="kubectl get pods -o wide"
 alias ksvc="kubectl get svc"
 alias klogs="kubectl logs -f"
 alias kdesc="kubectl describe"
@@ -79,16 +117,17 @@ alias kapply="kubectl apply -f"
 alias kgetall="kubectl get all --all-namespaces"
 alias kportfw="kubectl port-forward"
 
-# Homebrew (Mac package manager)
-if command -v brew &> /dev/null; then
-  eval "$(/usr/local/bin/brew shellenv)"
-fi
+# ------------------------------
+# Auto-start tmux (Optional)
+# ------------------------------
+# if command -v tmux &> /dev/null && [[ -z "$TMUX" ]]; then
+#   tmux
+# fi
 
-# Start tmux if not already running
-if command -v tmux &> /dev/null && [[ -z "$TMUX" ]]; then
-  tmux
-fi
-
-# Source custom configurations (if any)
+# ------------------------------
+# Custom Overrides
+# ------------------------------
 [[ -f ~/.zshrc_custom ]] && source ~/.zshrc_custom
-eval "$(/usr/local/bin/brew shellenv)"
+
+# To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
+[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
